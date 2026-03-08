@@ -1,0 +1,112 @@
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.login-sidebar {
+    display: none;
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary) 0%, #00251a 100%);
+    color: var(--text-inverse);
+    padding: 4rem 3rem;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .login-sidebar {
+        display: flex;
+    }
+}
+
+.login-branding h2 {
+    color: var(--text-inverse);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.login-branding p {
+    font-size: 1.125rem;
+    color: #e0f2f1;
+    line-height: 1.6;
+}
+
+.logo-icon-large {
+    margin-bottom: 2rem;
+    color: var(--secondary);
+}
+
+.login-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--background);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-header p {
+    color: var(--text-muted);
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: var(--error);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #fecaca;
+    text-align: center;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.back-link {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: var(--primary);
+}
