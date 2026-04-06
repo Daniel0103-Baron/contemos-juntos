@@ -1,24 +1,28 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Eye, Edit, Trash2, ShieldAlert, X } from 'lucide-react';
+import { Search, Plus, Eye, Edit, X } from 'lucide-react';
 import api from '../../services/api';
 import './Familias.css';
+
+const INITIAL_FORM_DATA = {
+    codigo_familia: '',
+    direccion: '',
+    barrio: '',
+    municipio: '',
+    departamento: '',
+    telefono_contacto: '',
+    numero_integrantes: 1,
+    nivel_vulnerabilidad: '',
+    observaciones: ''
+};
 
 const Familias = () => {
     const [familias, setFamilias] = useState([]);
     const [busqueda, setBusqueda] = useState('');
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        codigo_familia: '',
-        direccion: '',
-        barrio: '',
-        municipio: '',
-        departamento: '',
-        telefono_contacto: '',
-        numero_integrantes: 1,
-        nivel_vulnerabilidad: '',
-        observaciones: ''
-    });
+    const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+    const [modalMode, setModalMode] = useState('create');
+    const [selectedFamiliaId, setSelectedFamiliaId] = useState(null);
 
     useEffect(() => {
         cargarFamilias();
@@ -35,27 +39,57 @@ const Familias = () => {
         }
     };
 
+    const mapFamiliaToFormData = (familia) => ({
+        codigo_familia: familia.codigo_familia || '',
+        direccion: familia.direccion || '',
+        barrio: familia.barrio || '',
+        municipio: familia.municipio || '',
+        departamento: familia.departamento || '',
+        telefono_contacto: familia.telefono_contacto || '',
+        numero_integrantes: Number(familia.numero_integrantes) || 1,
+        nivel_vulnerabilidad: familia.nivel_vulnerabilidad || '',
+        observaciones: familia.observaciones || ''
+    });
+
+    const abrirModalNuevaFamilia = () => {
+        setModalMode('create');
+        setSelectedFamiliaId(null);
+        setFormData(INITIAL_FORM_DATA);
+        setShowModal(true);
+    };
+
+    const abrirModalFamilia = async (idFamilia, mode) => {
+        try {
+            const res = await api.get(`/familias/${idFamilia}`);
+            setFormData(mapFamiliaToFormData(res.data));
+            setSelectedFamiliaId(idFamilia);
+            setModalMode(mode);
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error cargando familia:', error);
+            alert(error.response?.data?.mensaje || 'Error al cargar los datos de la familia');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/familias', formData);
-            alert('Familia registrada exitosamente');
+            if (modalMode === 'edit' && selectedFamiliaId) {
+                await api.put(`/familias/${selectedFamiliaId}`, formData);
+                alert('Familia actualizada correctamente');
+            } else {
+                await api.post('/familias', formData);
+                alert('Familia registrada exitosamente');
+            }
+
             setShowModal(false);
-            setFormData({
-                codigo_familia: '',
-                direccion: '',
-                barrio: '',
-                municipio: '',
-                departamento: '',
-                telefono_contacto: '',
-                numero_integrantes: 1,
-                nivel_vulnerabilidad: '',
-                observaciones: ''
-            });
+            setFormData(INITIAL_FORM_DATA);
+            setSelectedFamiliaId(null);
+            setModalMode('create');
             cargarFamilias();
         } catch (error) {
             console.error('Error:', error);
-            alert(error.response?.data?.mensaje || 'Error al registrar familia');
+            alert(error.response?.data?.mensaje || 'Error al guardar la familia');
         }
     };
 
@@ -65,6 +99,15 @@ const Familias = () => {
         f.barrio?.toLowerCase().includes(busqueda.toLowerCase())
     );
 
+    const isViewMode = modalMode === 'view';
+    const isEditMode = modalMode === 'edit';
+
+    const modalTitle = isViewMode
+        ? 'Detalle de Familia'
+        : isEditMode
+            ? 'Editar Familia'
+            : 'Nueva Familia';
+
     return (
         <div className="module-container">
             <div className="module-header">
@@ -72,7 +115,7 @@ const Familias = () => {
                     <h2>Gestión de Familias y Censos</h2>
                     <p>Administre los núcleos familiares receptores de ayudas.</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                <button className="btn btn-primary" onClick={abrirModalNuevaFamilia}>
                     <Plus size={18} /> Nueva Familia
                 </button>
             </div>
@@ -119,8 +162,20 @@ const Familias = () => {
                                         </td>
                                         <td>
                                             <div className="table-actions">
-                                                <button className="btn-icon text-primary" title="Ver Detalle"><Eye size={18} /></button>
-                                                <button className="btn-icon text-info" title="Editar"><Edit size={18} /></button>
+                                                <button
+                                                    className="btn-icon text-primary"
+                                                    title="Ver Detalle"
+                                                    onClick={() => abrirModalFamilia(f.id_familia, 'view')}
+                                                >
+                                                    <Eye size={18} />
+                                                </button>
+                                                <button
+                                                    className="btn-icon text-info"
+                                                    title="Editar"
+                                                    onClick={() => abrirModalFamilia(f.id_familia, 'edit')}
+                                                >
+                                                    <Edit size={18} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -140,7 +195,7 @@ const Familias = () => {
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Nueva Familia</h3>
+                            <h3>{modalTitle}</h3>
                             <button className="btn-icon" onClick={() => setShowModal(false)}>
                                 <X size={20} />
                             </button>
@@ -156,6 +211,7 @@ const Familias = () => {
                                             required
                                             value={formData.codigo_familia}
                                             onChange={(e) => setFormData({...formData, codigo_familia: e.target.value})}
+                                            disabled={isViewMode || isEditMode}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -166,7 +222,8 @@ const Familias = () => {
                                             required
                                             min="1"
                                             value={formData.numero_integrantes}
-                                            onChange={(e) => setFormData({...formData, numero_integrantes: parseInt(e.target.value)})}
+                                            onChange={(e) => setFormData({...formData, numero_integrantes: Number(e.target.value) || 1})}
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                 </div>
@@ -178,6 +235,7 @@ const Familias = () => {
                                         required
                                         value={formData.direccion}
                                         onChange={(e) => setFormData({...formData, direccion: e.target.value})}
+                                            disabled={isViewMode}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -188,6 +246,7 @@ const Familias = () => {
                                             className="form-control"
                                             value={formData.barrio}
                                             onChange={(e) => setFormData({...formData, barrio: e.target.value})}
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -197,6 +256,7 @@ const Familias = () => {
                                             className="form-control"
                                             value={formData.municipio}
                                             onChange={(e) => setFormData({...formData, municipio: e.target.value})}
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                 </div>
@@ -208,6 +268,7 @@ const Familias = () => {
                                             className="form-control"
                                             value={formData.departamento}
                                             onChange={(e) => setFormData({...formData, departamento: e.target.value})}
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -217,6 +278,7 @@ const Familias = () => {
                                             className="form-control"
                                             value={formData.telefono_contacto}
                                             onChange={(e) => setFormData({...formData, telefono_contacto: e.target.value})}
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                 </div>
@@ -226,6 +288,7 @@ const Familias = () => {
                                         className="form-control"
                                         value={formData.nivel_vulnerabilidad}
                                         onChange={(e) => setFormData({...formData, nivel_vulnerabilidad: e.target.value})}
+                                        disabled={isViewMode}
                                     >
                                         <option value="">Seleccione...</option>
                                         <option value="ALTO">Alto</option>
@@ -240,16 +303,19 @@ const Familias = () => {
                                         rows="3"
                                         value={formData.observaciones}
                                         onChange={(e) => setFormData({...formData, observaciones: e.target.value})}
+                                        disabled={isViewMode}
                                     ></textarea>
                                 </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                                    Cancelar
+                                    {isViewMode ? 'Cerrar' : 'Cancelar'}
                                 </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Registrar Familia
-                                </button>
+                                {!isViewMode && (
+                                    <button type="submit" className="btn btn-primary">
+                                        {isEditMode ? 'Guardar Cambios' : 'Registrar Familia'}
+                                    </button>
+                                )}
                             </div>
                         </form>
                     </div>

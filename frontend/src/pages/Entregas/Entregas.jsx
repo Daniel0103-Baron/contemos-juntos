@@ -7,6 +7,10 @@ const Entregas = () => {
     const [entregas, setEntregas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState('');
+    const [previewFilename, setPreviewFilename] = useState('');
+    const [previewLoading, setPreviewLoading] = useState(false);
     const [familias, setFamilias] = useState([]);
     const [lotes, setLotes] = useState([]);
     const [formData, setFormData] = useState({
@@ -21,6 +25,23 @@ const Entregas = () => {
         cargarFamilias();
         cargarLotes();
     }, []);
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                window.URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
+    const cerrarPreview = () => {
+        setShowPreviewModal(false);
+        if (previewUrl) {
+            window.URL.revokeObjectURL(previewUrl);
+        }
+        setPreviewUrl('');
+        setPreviewFilename('');
+    };
 
     const cargarEntregas = async () => {
         try {
@@ -100,20 +121,42 @@ const Entregas = () => {
 
     const handleDescargarComprobante = async (id, numero) => {
         try {
-            const response = await api.get(`/reportes/comprobantes/${id}/pdf`, {
-                responseType: 'blob'
+            setPreviewLoading(true);
+            const response = await api.get(`/reportes/comprobantes/${id}/pdf?t=${Date.now()}`, {
+                responseType: 'blob',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
             });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `comprobante_${numero}.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            if (previewUrl) {
+                window.URL.revokeObjectURL(previewUrl);
+            }
+
+            setPreviewFilename(`comprobante_${numero}.pdf`);
+            setPreviewUrl(url);
+            setShowPreviewModal(true);
         } catch (error) {
-            console.error('Error al descargar comprobante', error);
-            alert('No se pudo descargar el comprobante.');
+            console.error('Error al cargar vista previa del comprobante', error);
+            alert('No se pudo cargar el comprobante.');
+        } finally {
+            setPreviewLoading(false);
         }
+    };
+
+    const descargarDesdePreview = () => {
+        if (!previewUrl || !previewFilename) {
+            return;
+        }
+
+        const link = document.createElement('a');
+        link.href = previewUrl;
+        link.setAttribute('download', previewFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     };
 
     return (
@@ -164,8 +207,9 @@ const Entregas = () => {
                                             <div className="table-actions">
                                                 <button
                                                     className="btn-icon text-primary"
-                                                    title="Descargar Comprobante PDF"
+                                                    title="Ver Comprobante PDF"
                                                     onClick={() => handleDescargarComprobante(e.id, e.numero_comprobante)}
+                                                    disabled={previewLoading}
                                                 >
                                                     <FileText size={18} />
                                                 </button>
@@ -285,6 +329,38 @@ const Entregas = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {showPreviewModal && (
+                <div className="modal-overlay" onClick={cerrarPreview}>
+                    <div className="modal-content pdf-preview-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>Vista previa del comprobante</h3>
+                            <button className="btn-icon" onClick={cerrarPreview}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="modal-body pdf-preview-body">
+                            {previewUrl ? (
+                                <iframe
+                                    title="Vista previa PDF"
+                                    src={previewUrl}
+                                    className="pdf-preview-frame"
+                                />
+                            ) : (
+                                <div className="loading-state">Cargando vista previa...</div>
+                            )}
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" onClick={cerrarPreview}>
+                                Cerrar
+                            </button>
+                            <button type="button" className="btn btn-primary" onClick={descargarDesdePreview}>
+                                Descargar PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

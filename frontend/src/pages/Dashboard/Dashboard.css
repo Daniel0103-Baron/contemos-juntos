@@ -208,3 +208,9 @@
     color: #15803d;
     border-left-color: var(--success);
 }
+
+.alert-box.info {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-left-color: #3b82f6;
+}
