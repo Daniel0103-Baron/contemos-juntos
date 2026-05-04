@@ -5,6 +5,7 @@ import {
     LayoutDashboard, Users, FileText, ClipboardList,
     PackageSearch, Package, ShieldAlert, LogOut, Menu, X, Heart
 } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 
 const MENU_ITEMS = {
     1: [ // Administrador
@@ -47,7 +48,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className={`sidebar-backdrop ${isOpen ? 'active' : ''}`} onClick={toggleSidebar}></div>
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <img src="/src/assets/logo.png" alt="Logo" style={{ width: '32px', height: '32px', marginRight: '0.75rem', borderRadius: '8px' }} />
+                    <img src={logoImg} alt="Logo" style={{ width: '32px', height: '32px', marginRight: '0.75rem', borderRadius: '8px' }} />
                     <span className="sidebar-brand">Contemos Juntos</span>
                     <button className="sidebar-close md-hidden" onClick={toggleSidebar}>
                         <X size={20} />

@@ -1,7 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { Heart, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 import './Login.css';
 
 const Login = () => {
@@ -38,7 +39,7 @@ const Login = () => {
             <div className="login-main">
                 <div className="login-branding">
                     <div style={{ backgroundColor: 'white', display: 'inline-block', padding: '12px', borderRadius: '24px', marginBottom: '1rem', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-                        <img src="/src/assets/logo.png" alt="Logo" style={{ width: '64px', height: '64px', display: 'block', borderRadius: '12px' }} />
+                        <img src={logoImg} alt="Logo" style={{ width: '64px', height: '64px', display: 'block', borderRadius: '12px' }} />
                     </div>
                     <h2>Contemos Juntos</h2>
                     <p>Sistema Avanzado de Gestión Humanitaria</p>
