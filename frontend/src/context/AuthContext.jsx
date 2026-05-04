@@ -8,14 +8,22 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const checkAuth = async () => {
-            const token = localStorage.getItem('token');
-            const userData = localStorage.getItem('usuario');
-            if (token && userData) {
-                // Validación adicional contra el backend idealmente...
-                setUsuario(JSON.parse(userData));
+        const checkAuth = () => {
+            try {
+                const token = localStorage.getItem('token');
+                const userData = localStorage.getItem('usuario');
+                if (token && userData) {
+                    const parsed = JSON.parse(userData);
+                    setUsuario(parsed);
+                }
+            } catch (e) {
+                // Si los datos de localStorage están corruptos, limpiar y continuar
+                console.warn('Sesión inválida, limpiando localStorage:', e);
+                localStorage.removeItem('token');
+                localStorage.removeItem('usuario');
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
         checkAuth();
     }, []);
