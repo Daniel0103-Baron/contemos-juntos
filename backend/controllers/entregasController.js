@@ -120,10 +120,11 @@ const registrarEntrega = async (req, res) => {
             );
 
             // Marcar lote como agotado si la cantidad disponible llega a 0
-            await connection.query(
-                'UPDATE ayuda_lotes SET estado = "AGOTADO" WHERE id_lote = ? AND cantidad_disponible <= 0',
-                [lote_id]
-            );
+            // NOTA: Campo 'estado' debe existir en la tabla ayuda_lotes si se descomenta
+            // await connection.query(
+            //     'UPDATE ayuda_lotes SET estado = "AGOTADO" WHERE id_lote = ? AND cantidad_disponible <= 0',
+            //     [lote_id]
+            // );
 
             // Registrar el movimiento de salida (Trazabilidad) si existe la tabla
             try {
