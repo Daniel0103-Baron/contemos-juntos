@@ -31,8 +31,8 @@ const login = async (req, res) => {
 
         const user = rows[0];
 
-        // Comparar password - están en texto plano en la BD
-        const accesoPermitido = passwordTrimmed === user.password_hash;
+        // Comparar password con bcrypt
+        const accesoPermitido = await bcrypt.compare(passwordTrimmed, user.password_hash);
 
         if (!accesoPermitido) {
             return res.status(401).json({ mensaje: 'Credenciales inválidas' });
