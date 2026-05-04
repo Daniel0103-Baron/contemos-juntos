@@ -80,8 +80,8 @@ const frontendDistPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendDistPath));
 
 // Fallback a index.html para SPA (React Router)
-// Esto debe ir DESPUÉS de los archivos estáticos, pero ANTES del error handler
-app.all('*', (req, res) => {
+// Usar middleware use() en lugar de all() o get() para evitar issues con path-to-regexp
+app.use((req, res, next) => {
     // No servir index.html para rutas que comienzan con /api/
     if (!req.path.startsWith('/api/')) {
         res.sendFile(path.join(frontendDistPath, 'index.html'), (err) => {
