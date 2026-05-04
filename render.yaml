@@ -5,15 +5,10 @@ services:
     region: oregon
     plan: free
     
-    # Build command - construye el frontend y prepara el backend
-    buildCommand: >
-      cd frontend &&
-      npm install &&
-      npm run build &&
-      cd ../backend &&
-      npm install
+    # Build command
+    buildCommand: bash build.sh
     
-    # Start command - inicia el servidor backend
+    # Start command
     startCommand: cd backend && npm start
     
     # Puerto
@@ -22,3 +17,4 @@ services:
         value: 5000
       - key: NODE_ENV
         value: production
+
