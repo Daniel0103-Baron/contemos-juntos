@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const https = require('https');
 const http = require('http');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -63,13 +64,34 @@ app.use('/api/inventario', apiLimiter, require('./routes/inventarioRoutes'));
 app.use('/api/entregas', apiLimiter, require('./routes/entregasRoutes'));
 app.use('/api/reportes', apiLimiter, require('./routes/reportesRoutes'));
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({ message: 'API del Sistema de Control y Trazabilidad de Ayudas Humanitarias' });
 });
 
 // Endpoint de salud para el keep-alive
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ========================================================
+// SERVIR ARCHIVOS ESTÁTICOS DEL FRONTEND
+// ========================================================
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDistPath));
+
+// Fallback a index.html para SPA (React Router)
+// Esto debe ir DESPUÉS de los archivos estáticos, pero ANTES del error handler
+app.get('*', (req, res) => {
+    // No servir index.html para rutas que comienzan con /api/
+    if (!req.path.startsWith('/api/')) {
+        res.sendFile(path.join(frontendDistPath, 'index.html'), (err) => {
+            if (err) {
+                res.status(404).json({ mensaje: 'No encontrado' });
+            }
+        });
+    } else {
+        res.status(404).json({ mensaje: 'Ruta de API no encontrada' });
+    }
 });
 
 // Manejador de errores global
@@ -79,9 +101,10 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0'; // Requerido para Render
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Servidor corriendo en ${HOST}:${PORT}`);
 
     // ========================================================
     // KEEP-ALIVE: Evita el "cold start" de Render

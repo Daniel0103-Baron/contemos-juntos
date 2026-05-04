@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: contemos-juntos
+    env: node
+    region: oregon
+    plan: free
+    
+    # Build command - construye el frontend y prepara el backend
+    buildCommand: >
+      cd frontend &&
+      npm install &&
+      npm run build &&
+      cd ../backend &&
+      npm install
+    
+    # Start command - inicia el servidor backend
+    startCommand: cd backend && npm start
+    
+    # Puerto
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
