@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import Landing from './pages/Landing';
 import DashboardLayout from './components/Layout/DashboardLayout';
@@ -16,6 +17,7 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <Toaster position="top-right" />
         <Router>
           <Routes>
             <Route path="/" element={<Landing />} />

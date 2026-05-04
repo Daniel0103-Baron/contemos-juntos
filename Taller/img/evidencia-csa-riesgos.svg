@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <defs>
+    <style>
+      .title { font: 700 32px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .head { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .cell { font: 600 16px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .sub { font: 500 14px 'Segoe UI', Arial, sans-serif; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#ffffff" />
+  <text x="40" y="60" class="title">Evidencia Tecnica: Mapa CSA de Riesgos del Proyecto</text>
+
+  <rect x="40" y="100" width="1120" height="60" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="70" y="138" class="head">Modulo</text>
+  <text x="350" y="138" class="head">Riesgo</text>
+  <text x="760" y="138" class="head">Evaluacion</text>
+  <text x="940" y="138" class="head">Remanente</text>
+
+  <rect x="40" y="160" width="1120" height="90" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="195" class="cell">Auth</text>
+  <text x="350" y="195" class="sub">Password en texto plano</text>
+  <rect x="740" y="176" width="130" height="40" fill="#fee2e2" stroke="#ef4444"/>
+  <text x="775" y="202" class="cell">Debil</text>
+  <rect x="930" y="176" width="130" height="40" fill="#fecaca" stroke="#dc2626"/>
+  <text x="972" y="202" class="cell">Alto</text>
+
+  <rect x="40" y="250" width="1120" height="90" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="285" class="cell">Autorizacion</text>
+  <text x="350" y="285" class="sub">Bypass sin token/rol</text>
+  <rect x="740" y="266" width="130" height="40" fill="#ccfbf1" stroke="#14b8a6"/>
+  <text x="770" y="292" class="cell">Fuerte</text>
+  <rect x="930" y="266" width="130" height="40" fill="#dcfce7" stroke="#22c55e"/>
+  <text x="975" y="292" class="cell">Bajo</text>
+
+  <rect x="40" y="340" width="1120" height="90" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="375" class="cell">Entregas</text>
+  <text x="350" y="375" class="sub">Duplicidad si falta tabla control</text>
+  <rect x="740" y="356" width="130" height="40" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="775" y="382" class="cell">Medio</text>
+  <rect x="930" y="356" width="130" height="40" fill="#fde68a" stroke="#d97706"/>
+  <text x="958" y="382" class="cell">Medio-Alto</text>
+
+  <rect x="40" y="430" width="1120" height="90" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="465" class="cell">Inventario</text>
+  <text x="350" y="465" class="sub">Entrega sin stock</text>
+  <rect x="740" y="446" width="130" height="40" fill="#ccfbf1" stroke="#14b8a6"/>
+  <text x="770" y="472" class="cell">Fuerte</text>
+  <rect x="930" y="446" width="130" height="40" fill="#dcfce7" stroke="#22c55e"/>
+  <text x="975" y="472" class="cell">Bajo</text>
+
+  <rect x="40" y="520" width="1120" height="90" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="555" class="cell">Continuidad</text>
+  <text x="350" y="555" class="sub">Sin backup automatizado</text>
+  <rect x="740" y="536" width="130" height="40" fill="#fee2e2" stroke="#ef4444"/>
+  <text x="775" y="562" class="cell">Debil</text>
+  <rect x="930" y="536" width="130" height="40" fill="#fecaca" stroke="#dc2626"/>
+  <text x="972" y="562" class="cell">Alto</text>
+
+  <text x="40" y="700" class="sub">Fuente: Autoevaluacion CSA del equipo sobre modulos backend del proyecto Contemos Juntos.</text>
+</svg>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PackageSearch, Plus, AlertTriangle, TrendingUp, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import '../Familias/Familias.css'; // Usando estilos compartidos de tablas
 
@@ -10,8 +11,7 @@ const Inventario = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
-        id_tipo_ayuda: '',
-        numero_lote: '',
+        cantidad: '',
         fecha_vencimiento: '',
         observaciones: ''
     });
@@ -36,31 +36,31 @@ const Inventario = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.id_tipo_ayuda || !formData.numero_lote) {
-            alert('Seleccione tipo de ayuda y número de lote');
+        if (!formData.id_tipo_ayuda || !formData.cantidad) {
+            toast.error('Seleccione tipo de ayuda y cantidad.');
             return;
         }
 
         try {
             await api.post('/inventario/ingresos', {
                 id_tipo_ayuda: Number(formData.id_tipo_ayuda),
-                numero_lote: formData.numero_lote,
+                id_tipo_ayuda: Number(formData.id_tipo_ayuda),
+                cantidad: parseInt(formData.cantidad, 10),
                 fecha_vencimiento: formData.fecha_vencimiento || null,
                 observaciones: formData.observaciones || null
             });
 
-            alert('Ingreso registrado exitosamente');
+            toast.success('Ingreso registrado exitosamente');
             setShowModal(false);
             setFormData({
-                id_tipo_ayuda: '',
-                numero_lote: '',
+                cantidad: '',
                 fecha_vencimiento: '',
                 observaciones: ''
             });
             cargarStock();
         } catch (error) {
             console.error('Error registrando ingreso:', error);
-            alert(error.response?.data?.mensaje || 'Error al registrar ingreso');
+            toast.error(error.response?.data?.mensaje || 'Error al registrar ingreso');
         }
     };
 
@@ -73,7 +73,7 @@ const Inventario = () => {
                 </div>
                 <div className="header-actions">
                     <button className="btn btn-secondary" style={{ marginRight: '1rem' }} onClick={() => setShowModal(true)}>
-                        <Plus size={18} /> Registrar Ingreso (+Lote)
+                        <Plus size={18} /> Registrar Ayuda
                     </button>
                     <button className="btn btn-primary" onClick={() => navigate('/dashboard/reportes')}>
                         <TrendingUp size={18} /> Historial Movimientos
@@ -160,7 +160,7 @@ const Inventario = () => {
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Registrar Ingreso de Lote</h3>
+                            <h3>Registrar Ayuda</h3>
                             <button className="btn-icon" onClick={() => setShowModal(false)}>
                                 <X size={20} />
                             </button>
@@ -189,14 +189,15 @@ const Inventario = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Numero de Lote *</label>
+                                    <label>Cantidad *</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         className="form-control"
                                         required
-                                        value={formData.numero_lote}
-                                        onChange={(e) => setFormData({ ...formData, numero_lote: e.target.value })}
-                                        placeholder="Ej: LOT-2026-001"
+                                        min="1"
+                                        value={formData.cantidad}
+                                        onChange={(e) => setFormData({ ...formData, cantidad: e.target.value })}
+                                        placeholder="Ingrese la cantidad"
                                     />
                                 </div>
 

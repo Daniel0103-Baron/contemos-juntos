@@ -7,13 +7,21 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "e2e:smoke": "python -m pytest e2e/tests -m smoke",
+    "e2e:smoke:full": "powershell -NoProfile -ExecutionPolicy Bypass -File ./e2e/run-smoke-full.ps1",
+    "e2e:regression": "python -m pytest e2e/tests -m 'regression and not writes'",
+    "e2e:writes": "python -m pytest e2e/tests -m writes --allow-writes",
+    "e2e:report": "python -m pytest e2e/tests -m smoke --html=e2e/reports/smoke.html --self-contained-html"
   },
   "dependencies": {
     "axios": "^1.13.6",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.13.1"
   },
   "devDependencies": {

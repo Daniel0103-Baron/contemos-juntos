@@ -1,39 +1,43 @@
 :root {
-  /* Brand Colors */
-  --primary: #004d40;
-  --primary-hover: #00695c;
-  --secondary: #ffb300;
-  --secondary-hover: #ffca28;
+  /* Brand Colors - Sleek Violet & Deep Blue */
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --secondary: #10B981;
+  --secondary-hover: #059669;
 
   /* Status Colors */
-  --success: #43a047;
-  --warning: #fb8c00;
-  --error: #e53935;
-  --info: #1e88e5;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
 
   /* Surface Colors */
-  --background: #f8fafc;
+  --background: #F3F4F6;
   --surface: #ffffff;
-  --surface-hover: #f1f5f9;
+  --surface-hover: #F9FAFB;
+  --surface-glass: rgba(255, 255, 255, 0.7);
 
   /* Text Colors */
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-main: #111827;
+  --text-muted: #6B7280;
   --text-inverse: #ffffff;
 
   /* Border and Shadows */
-  --border: #e2e8f0;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.1);
+  --border: #E5E7EB;
+  --border-light: rgba(255, 255, 255, 0.5);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 
   /* Transitions */
-  --transition: all 0.3s ease;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Font */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
+
 
 * {
   margin: 0;

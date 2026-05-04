@@ -87,7 +87,7 @@ const registrarEntrega = async (req, res) => {
 
             // 3. Validar existencia del lote
             const [loteCheck] = await connection.query(
-                'SELECT numero_lote, estado FROM ayuda_lotes WHERE id_lote = ? FOR UPDATE', // BLOQUEA LA FILA
+                'SELECT numero_lote, estado, cantidad_disponible FROM ayuda_lotes WHERE id_lote = ? FOR UPDATE', // BLOQUEA LA FILA
                 [lote_id]
             );
 
@@ -97,6 +97,10 @@ const registrarEntrega = async (req, res) => {
             
             if (loteCheck[0].estado !== 'DISPONIBLE') {
                 throw new Error(`LOTE_NO_DISPONIBLE: El lote ${loteCheck[0].numero_lote} no está disponible.`);
+            }
+
+            if (Number(loteCheck[0].cantidad_disponible) < Number(cantidad)) {
+                throw new Error(`CANTIDAD_INSUFICIENTE: El lote ${loteCheck[0].numero_lote} solo tiene ${loteCheck[0].cantidad_disponible} unidades disponibles, y se intentan entregar ${cantidad}.`);
             }
 
             // Registrar detalle de la entrega (si existe la tabla)
@@ -109,9 +113,15 @@ const registrarEntrega = async (req, res) => {
                 console.log('Tabla entrega_detalles no disponible:', e.message);
             }
 
-            // Marcar lote como usado si se usó completamente
+            // Descontar inventario
             await connection.query(
-                'UPDATE ayuda_lotes SET estado = "AGOTADO" WHERE id_lote = ?',
+                'UPDATE ayuda_lotes SET cantidad_disponible = cantidad_disponible - ? WHERE id_lote = ?',
+                [cantidad, lote_id]
+            );
+
+            // Marcar lote como agotado si la cantidad disponible llega a 0
+            await connection.query(
+                'UPDATE ayuda_lotes SET estado = "AGOTADO" WHERE id_lote = ? AND cantidad_disponible <= 0',
                 [lote_id]
             );
 

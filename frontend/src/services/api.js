@@ -24,14 +24,13 @@ api.interceptors.response.use(
     error => {
         // Manejo de errores específicos
         if (error.response?.status === 401) {
-            // Token expirado o no válido
-            localStorage.removeItem('token');
-            localStorage.removeItem('usuario');
-            window.location.href = '/login';
-            return Promise.reject({
-                ...error,
-                mensaje: 'Sesión expirada. Por favor, inicie sesión nuevamente.'
-            });
+            // Si ya estamos en login, no redirigir (es un intento de login fallido)
+            if (window.location.pathname !== '/login') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('usuario');
+                window.location.href = '/login';
+            }
+            return Promise.reject(error);
         }
 
         if (error.response?.status === 403) {

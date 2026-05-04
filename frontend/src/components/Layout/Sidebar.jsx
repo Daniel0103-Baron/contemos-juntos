@@ -12,8 +12,7 @@ const MENU_ITEMS = {
         { path: '/dashboard/familias', icon: Users, label: 'Familias y Censos' },
         { path: '/dashboard/inventario', icon: Package, label: 'Inventario' },
         { path: '/dashboard/entregas', icon: ClipboardList, label: 'Entregas' },
-        { path: '/dashboard/reportes', icon: FileText, label: 'Reportes' },
-        { path: '/dashboard/auditoria', icon: ShieldAlert, label: 'Auditoría' },
+        { path: '/dashboard/reportes', icon: ShieldAlert, label: 'Auditoría' },
     ],
     2: [ // Usuario / Operador
         { path: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
@@ -26,8 +25,7 @@ const MENU_ITEMS = {
     ],
     4: [ // Auditor
         { path: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
-        { path: '/dashboard/reportes', icon: FileText, label: 'Reportes y Exportación' },
-        { path: '/dashboard/auditoria', icon: ShieldAlert, label: 'Bitácora' },
+        { path: '/dashboard/reportes', icon: ShieldAlert, label: 'Auditoría' },
     ]
 };
 
@@ -49,7 +47,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className={`sidebar-backdrop ${isOpen ? 'active' : ''}`} onClick={toggleSidebar}></div>
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <Heart className="sidebar-logo-icon" size={24} />
+                    <img src="/src/assets/logo.png" alt="Logo" style={{ width: '32px', height: '32px', marginRight: '0.75rem', borderRadius: '8px' }} />
                     <span className="sidebar-brand">Contemos Juntos</span>
                     <button className="sidebar-close md-hidden" onClick={toggleSidebar}>
                         <X size={20} />

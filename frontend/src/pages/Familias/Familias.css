@@ -51,6 +51,10 @@
 .table-container {
     padding: 0;
     overflow-x: auto;
+    border-radius: 1rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
 }
 
 .data-table {
@@ -61,25 +65,32 @@
 
 .data-table th,
 .data-table td {
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border);
+    vertical-align: middle;
 }
 
 .data-table th {
     background-color: var(--surface-hover);
     color: var(--text-muted);
-    font-weight: 500;
-    font-size: 0.875rem;
+    font-weight: 600;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .data-table tbody tr {
     transition: var(--transition);
+    background-color: var(--surface);
 }
 
 .data-table tbody tr:hover {
     background-color: var(--surface-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .data-table tbody tr:last-child td {
@@ -93,25 +104,36 @@
 .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
 }
 
 .badge-success {
-    background-color: #dcfce7;
-    color: #16a34a;
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .badge-warning {
-    background-color: #fef9c3;
-    color: #ca8a04;
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .badge-error {
-    background-color: #fee2e2;
-    color: #dc2626;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.badge-info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .table-actions {
@@ -166,22 +188,36 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     max-width: 600px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
+    border: 1px solid var(--border);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .modal-header {

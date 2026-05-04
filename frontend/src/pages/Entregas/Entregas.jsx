@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ClipboardList, Plus, FileText, CheckCircle2, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import '../Familias/Familias.css';
 
@@ -56,7 +57,7 @@ const Entregas = () => {
 
     const cargarFamilias = async () => {
         try {
-            const res = await api.get('/familias');
+            const res = await api.get('/familias?disponibles=true');
             setFamilias(res.data);
         } catch (error) {
             console.error('Error cargando familias:', error);
@@ -76,17 +77,17 @@ const Entregas = () => {
         e.preventDefault();
         
         if (!formData.familia_id) {
-            alert('Por favor seleccione una familia');
+            toast.error('Por favor seleccione una familia');
             return;
         }
         if (formData.detalles.length === 0) {
-            alert('Por favor agregue al menos un lote a entregar');
+            toast.error('Por favor agregue al menos un lote a entregar');
             return;
         }
 
         try {
             await api.post('/entregas', formData);
-            alert('Entrega registrada exitosamente');
+            toast.success('Entrega registrada exitosamente');
             setShowModal(false);
             setFormData({
                 familia_id: '',
@@ -97,14 +98,14 @@ const Entregas = () => {
             cargarEntregas();
         } catch (error) {
             console.error('Error:', error);
-            alert(error.response?.data?.mensaje || 'Error al registrar entrega');
+            toast.error(error.response?.data?.mensaje || 'Error al registrar entrega');
         }
     };
 
     const agregarDetalle = () => {
         setFormData({
             ...formData,
-            detalles: [...formData.detalles, { lote_id: '', tipo_ayuda_id: 1, cantidad: 1 }]
+            detalles: [...formData.detalles, { lote_id: '', tipo_ayuda_id: 1, cantidad: 2 }]
         });
     };
 
@@ -140,7 +141,7 @@ const Entregas = () => {
             setShowPreviewModal(true);
         } catch (error) {
             console.error('Error al cargar vista previa del comprobante', error);
-            alert('No se pudo cargar el comprobante.');
+            toast.error('No se pudo cargar el comprobante.');
         } finally {
             setPreviewLoading(false);
         }
@@ -166,7 +167,26 @@ const Entregas = () => {
                     <h2>Registro de Entregas</h2>
                     <p>Gestione y despache las ayudas humanitarias a familias censadas.</p>
                 </div>
-                <button className="btn btn-primary btn-lg" onClick={() => setShowModal(true)}>
+                <button className="btn btn-primary btn-lg" onClick={() => {
+                    const detallesIniciales = [];
+                    const tiposVistos = new Set();
+                    lotes.forEach(l => {
+                        if (!tiposVistos.has(l.tipo_ayuda) && l.cantidad_disponible >= 2) {
+                            tiposVistos.add(l.tipo_ayuda);
+                            detallesIniciales.push({
+                                lote_id: String(l.id_lote),
+                                cantidad: 2
+                            });
+                        }
+                    });
+                    setFormData({
+                        familia_id: '',
+                        periodo_entrega_id: null,
+                        observaciones: '',
+                        detalles: detallesIniciales
+                    });
+                    setShowModal(true);
+                }}>
                     <Plus size={18} /> Nueva Entrega
                 </button>
             </div>
@@ -250,14 +270,14 @@ const Entregas = () => {
                                         <option value="">Seleccione una familia...</option>
                                         {familias.map(f => (
                                             <option key={f.id_familia} value={f.id_familia}>
-                                                {f.codigo_familia} - {f.direccion}
+                                                {f.codigo_familia} - {f.cabeza_nombres} {f.cabeza_apellidos}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Lotes a Entregar *</label>
+                                    <label>Entregar Ayuda *</label>
                                     <button 
                                         type="button" 
                                         className="btn btn-secondary btn-sm" 
@@ -285,7 +305,7 @@ const Entregas = () => {
                                                 <option value="">Seleccione lote...</option>
                                                 {lotes.map(l => (
                                                     <option key={l.id_lote} value={l.id_lote}>
-                                                        {l.numero_lote} - {l.tipo_ayuda}
+                                                        {l.numero_lote} - {l.tipo_ayuda} (Disp: {l.cantidad_disponible})
                                                     </option>
                                                 ))}
                                             </select>

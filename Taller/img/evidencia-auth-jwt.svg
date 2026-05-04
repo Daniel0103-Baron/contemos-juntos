@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <style>
+      .title { font: 700 32px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .label { font: 600 20px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .small { font: 500 16px 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .box { fill: #f8fafc; stroke: #0ea5a4; stroke-width: 3; rx: 16; }
+      .warn { fill: #fff7ed; stroke: #f97316; stroke-width: 3; rx: 16; }
+      .ok { fill: #ecfeff; stroke: #0891b2; stroke-width: 3; rx: 16; }
+      .arrow { stroke: #1e293b; stroke-width: 3; marker-end: url(#arrowHead); }
+    </style>
+    <marker id="arrowHead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" fill="#ffffff" />
+  <text x="50" y="60" class="title">Evidencia Tecnica: Flujo de Login con JWT y Punto de Riesgo</text>
+
+  <rect x="60" y="130" width="260" height="120" class="box" />
+  <text x="90" y="180" class="label">Cliente (Frontend)</text>
+  <text x="90" y="210" class="small">Envia usuario y password</text>
+
+  <rect x="470" y="130" width="280" height="120" class="box" />
+  <text x="500" y="180" class="label">API /auth/login</text>
+  <text x="500" y="210" class="small">Valida entrada y consulta DB</text>
+
+  <rect x="890" y="130" width="250" height="120" class="ok" />
+  <text x="920" y="180" class="label">JWT emitido</text>
+  <text x="920" y="210" class="small">expiresIn: 8h</text>
+
+  <line x1="320" y1="190" x2="470" y2="190" class="arrow" />
+  <text x="350" y="175" class="small">POST /login</text>
+
+  <line x1="750" y1="190" x2="890" y2="190" class="arrow" />
+  <text x="780" y="175" class="small">200 + token</text>
+
+  <rect x="400" y="340" width="420" height="220" class="warn" />
+  <text x="430" y="390" class="label">Hallazgo de seguridad (alto)</text>
+  <text x="430" y="430" class="small">Comparacion de password en texto plano:</text>
+  <text x="430" y="460" class="small">accesoPermitido = passwordTrimmed === user.password_hash</text>
+  <text x="430" y="500" class="small">Riesgo: exposicion de credenciales y acceso indebido</text>
+
+  <line x1="610" y1="250" x2="610" y2="340" class="arrow" />
+</svg>

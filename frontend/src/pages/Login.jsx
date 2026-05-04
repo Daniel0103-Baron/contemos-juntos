@@ -21,9 +21,12 @@ const Login = () => {
         setError('');
         setIsLoading(true);
 
-        const result = await login(credenciales);
+        // Garantizar un tiempo mínimo de carga para que el spinner sea visible
+        const minDelay = new Promise(resolve => setTimeout(resolve, 1200));
+        const [result] = await Promise.all([login(credenciales), minDelay]);
+
         if (result.success) {
-            navigate('/dashboard'); // Redirigiremos al dashboard principal, y ahí se mostrará según rol
+            navigate('/dashboard');
         } else {
             setError(result.mensaje);
         }
@@ -32,18 +35,19 @@ const Login = () => {
 
     return (
         <div className="login-wrapper">
-            <div className="login-sidebar">
-                <div className="login-branding">
-                    <Heart size={48} className="logo-icon-large" />
-                    <h2>Contemos Juntos</h2>
-                    <p>Plataforma para la gestión y trazabilidad de ayudas humanitarias.</p>
-                </div>
-            </div>
             <div className="login-main">
+                <div className="login-branding">
+                    <div style={{ backgroundColor: 'white', display: 'inline-block', padding: '12px', borderRadius: '24px', marginBottom: '1rem', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+                        <img src="/src/assets/logo.png" alt="Logo" style={{ width: '64px', height: '64px', display: 'block', borderRadius: '12px' }} />
+                    </div>
+                    <h2>Contemos Juntos</h2>
+                    <p>Sistema Avanzado de Gestión Humanitaria</p>
+                </div>
+
                 <div className="login-container">
                     <div className="login-header">
-                        <h2>Iniciar Sesión</h2>
-                        <p>Ingrese sus credenciales para acceder al sistema.</p>
+                        <h2>Acceso al Sistema</h2>
+                        <p>Ingrese sus credenciales corporativas</p>
                     </div>
 
                     {error && <div className="alert-error">{error}</div>}
@@ -76,7 +80,7 @@ const Login = () => {
                         </div>
 
                         <button type="submit" className="btn btn-primary btn-full" disabled={isLoading}>
-                            {isLoading ? <Loader className="spin" size={20} /> : 'Acceder'}
+                            {isLoading ? <Loader className="spin" size={20} /> : 'Iniciar Sesión'}
                         </button>
                     </form>
 

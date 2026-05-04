@@ -11,8 +11,11 @@ const INITIAL_FORM_DATA = {
     departamento: '',
     telefono_contacto: '',
     numero_integrantes: 1,
-    nivel_vulnerabilidad: '',
-    observaciones: ''
+    grupo_sisben: '',
+    observaciones: '',
+    cabeza_nombres: '',
+    cabeza_apellidos: '',
+    cabeza_documento: ''
 };
 
 const Familias = () => {
@@ -47,7 +50,7 @@ const Familias = () => {
         departamento: familia.departamento || '',
         telefono_contacto: familia.telefono_contacto || '',
         numero_integrantes: Number(familia.numero_integrantes) || 1,
-        nivel_vulnerabilidad: familia.nivel_vulnerabilidad || '',
+        grupo_sisben: familia.grupo_sisben || '',
         observaciones: familia.observaciones || ''
     });
 
@@ -142,7 +145,8 @@ const Familias = () => {
                         <thead>
                             <tr>
                                 <th>Código</th>
-                                <th>Barrio</th>
+                                <th>Jefe de Hogar</th>
+                                <th>Sisbén</th>
                                 <th>N° Integrantes</th>
                                 <th>Dirección</th>
                                 <th>Estado</th>
@@ -154,7 +158,8 @@ const Familias = () => {
                                 familiasFiltradas.map(f => (
                                     <tr key={f.id_familia}>
                                         <td className="fw-semibold">{f.codigo_familia}</td>
-                                        <td>{f.barrio || 'N/A'}</td>
+                                        <td>{f.cabeza_nombres ? `${f.cabeza_nombres} ${f.cabeza_apellidos || ''}` : 'Sin asignar'}</td>
+                                        <td><span className="badge badge-info">{f.grupo_sisben || 'N/A'}</span></td>
                                         <td>{f.numero_integrantes}</td>
                                         <td>{f.direccion}</td>
                                         <td>
@@ -203,17 +208,19 @@ const Familias = () => {
                         <form onSubmit={handleSubmit}>
                             <div className="modal-body">
                                 <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Código de Familia *</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            required
-                                            value={formData.codigo_familia}
-                                            onChange={(e) => setFormData({...formData, codigo_familia: e.target.value})}
-                                            disabled={isViewMode || isEditMode}
-                                        />
-                                    </div>
+                                    {!isEditMode && !isViewMode ? null : (
+                                        <div className="form-group">
+                                            <label>Código de Familia *</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                required
+                                                value={formData.codigo_familia}
+                                                onChange={(e) => setFormData({...formData, codigo_familia: e.target.value})}
+                                                disabled={true}
+                                            />
+                                        </div>
+                                    )}
                                     <div className="form-group">
                                         <label>Número de Integrantes *</label>
                                         <input
@@ -227,6 +234,52 @@ const Familias = () => {
                                         />
                                     </div>
                                 </div>
+
+                                {!isEditMode && !isViewMode && (
+                                    <>
+                                        <h4 style={{marginTop: '15px', marginBottom: '10px'}}>Datos del Jefe de Hogar</h4>
+                                        <div className="form-row">
+                                            <div className="form-group">
+                                                <label>Número de Cédula *</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    required
+                                                    pattern="[0-9]{6,11}"
+                                                    title="La cédula debe tener entre 6 y 11 números"
+                                                    value={formData.cabeza_documento}
+                                                    onChange={(e) => {
+                                                        const soloNumeros = e.target.value.replace(/[^0-9]/g, '');
+                                                        setFormData({...formData, cabeza_documento: soloNumeros});
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-row">
+                                            <div className="form-group">
+                                                <label>Nombres *</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    required
+                                                    value={formData.cabeza_nombres}
+                                                    onChange={(e) => setFormData({...formData, cabeza_nombres: e.target.value})}
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Apellidos *</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    required
+                                                    value={formData.cabeza_apellidos}
+                                                    onChange={(e) => setFormData({...formData, cabeza_apellidos: e.target.value})}
+                                                />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
                                 <div className="form-group">
                                     <label>Dirección *</label>
                                     <input
@@ -283,17 +336,27 @@ const Familias = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label>Nivel de Vulnerabilidad</label>
+                                    <label>Grupo Sisbén *</label>
                                     <select
                                         className="form-control"
-                                        value={formData.nivel_vulnerabilidad}
-                                        onChange={(e) => setFormData({...formData, nivel_vulnerabilidad: e.target.value})}
+                                        required
+                                        value={formData.grupo_sisben}
+                                        onChange={(e) => setFormData({...formData, grupo_sisben: e.target.value})}
                                         disabled={isViewMode}
                                     >
-                                        <option value="">Seleccione...</option>
-                                        <option value="ALTO">Alto</option>
-                                        <option value="MEDIO">Medio</option>
-                                        <option value="BAJO">Bajo</option>
+                                        <option value="">Seleccione un grupo...</option>
+                                        <optgroup label="Grupo A (Pobreza Extrema)">
+                                            {Array.from({length: 5}, (_, i) => `A${i + 1}`).map(g => <option key={g} value={g}>{g}</option>)}
+                                        </optgroup>
+                                        <optgroup label="Grupo B (Pobreza Moderada)">
+                                            {Array.from({length: 7}, (_, i) => `B${i + 1}`).map(g => <option key={g} value={g}>{g}</option>)}
+                                        </optgroup>
+                                        <optgroup label="Grupo C (Vulnerable)">
+                                            {Array.from({length: 18}, (_, i) => `C${i + 1}`).map(g => <option key={g} value={g}>{g}</option>)}
+                                        </optgroup>
+                                        <optgroup label="Grupo D (No Pobre)">
+                                            {Array.from({length: 21}, (_, i) => `D${i + 1}`).map(g => <option key={g} value={g}>{g}</option>)}
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div className="form-group">

@@ -1,99 +1,128 @@
 .login-wrapper {
     display: flex;
     min-height: 100vh;
-}
-
-.login-sidebar {
-    display: none;
-    flex: 1;
-    background: linear-gradient(135deg, var(--primary) 0%, #00251a 100%);
-    color: var(--text-inverse);
-    padding: 4rem 3rem;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    background-image: url('../assets/login_bg.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
-@media (min-width: 768px) {
-    .login-sidebar {
-        display: flex;
-    }
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1;
+}
+
+.login-main {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 2rem;
+}
+
+.login-branding {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
 }
 
 .login-branding h2 {
-    color: var(--text-inverse);
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: white;
 }
 
 .login-branding p {
     font-size: 1.125rem;
-    color: #e0f2f1;
-    line-height: 1.6;
+    opacity: 0.8;
 }
 
 .logo-icon-large {
-    margin-bottom: 2rem;
     color: var(--secondary);
-}
-
-.login-main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background-color: var(--background);
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
 }
 
 .login-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    color: white;
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .login-header h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
+    color: white;
     margin-bottom: 0.5rem;
 }
 
 .login-header p {
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
 }
 
-.alert-error {
-    background-color: #fee2e2;
-    color: var(--error);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.875rem;
-    border: 1px solid #fecaca;
-    text-align: center;
+.login-form .form-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.login-form .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+}
+
+.login-form .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.login-form .form-control:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
 }
 
 .btn-full {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    margin-top: 1rem;
+    padding: 0.875rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
 }
 
-.spin {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
+.alert-error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    backdrop-filter: blur(5px);
 }
 
 .login-footer {
@@ -102,11 +131,21 @@
 }
 
 .back-link {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
 .back-link:hover {
-    color: var(--primary);
+    color: white;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

@@ -9,8 +9,8 @@ const getInventarioActual = async (req, res) => {
                 ta.nombre,
                 ta.nombre as nombre_tipo,
                 ta.descripcion,
-                COALESCE(SUM(CASE WHEN al.estado = 'DISPONIBLE' THEN 1 ELSE 0 END), 0) as lotes_disponibles,
-                COALESCE(SUM(CASE WHEN al.estado = 'DISPONIBLE' THEN 1 ELSE 0 END), 0) as cantidad_disponible
+                COALESCE(SUM(al.cantidad_disponible), 0) as lotes_disponibles,
+                COALESCE(SUM(al.cantidad_disponible), 0) as cantidad_disponible
             FROM tipos_ayuda ta
             LEFT JOIN ayudas a ON ta.id_tipo_ayuda = a.id_tipo_ayuda
             LEFT JOIN ayuda_lotes al ON a.id_ayuda = al.id_ayuda
@@ -31,6 +31,7 @@ const getLotesStock = async (req, res) => {
             SELECT 
                 al.id_lote,
                 al.numero_lote,
+                al.cantidad_disponible,
                 al.fecha_vencimiento,
                 al.fecha_ingreso,
                 al.estado,
@@ -53,9 +54,11 @@ const registrarIngreso = async (req, res) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
-        const { id_tipo_ayuda, id_ayuda, numero_lote, fecha_vencimiento, fecha_ingreso, observaciones } = req.body;
+        const { id_tipo_ayuda, id_ayuda, numero_lote: req_numero_lote, cantidad, fecha_vencimiento, fecha_ingreso, observaciones } = req.body;
         const usuario_id = req.usuario.id || req.usuario.id_usuario;
         let ayudaId = id_ayuda;
+        const cantidad_ingreso = cantidad ? parseInt(cantidad) : 1;
+        const numero_lote = req_numero_lote || 'LOT-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 1000);
 
         // Permitir enviar solo id_tipo_ayuda desde frontend.
         if (!ayudaId && id_tipo_ayuda) {
@@ -69,17 +72,12 @@ const registrarIngreso = async (req, res) => {
         }
 
         // Validación de campos requeridos
-        if (!ayudaId || !numero_lote) {
+        if (!ayudaId) {
             await connection.rollback();
-            return res.status(400).json({ mensaje: 'Los campos: id_ayuda (o id_tipo_ayuda) y numero_lote son requeridos' });
+            return res.status(400).json({ mensaje: 'El id_ayuda (o id_tipo_ayuda) es requerido' });
         }
 
         // Validación de lote
-        if (numero_lote.trim().length === 0) {
-            await connection.rollback();
-            return res.status(400).json({ mensaje: 'El número de lote no puede estar vacío' });
-        }
-
         if (numero_lote.trim().length < 3) {
             await connection.rollback();
             return res.status(400).json({ mensaje: 'El número de lote debe tener al menos 3 caracteres' });
@@ -97,16 +95,15 @@ const registrarIngreso = async (req, res) => {
 
         // 1. Crear el Lote
         const [loteInsert] = await connection.query(
-            'INSERT INTO ayuda_lotes (id_ayuda, numero_lote, fecha_vencimiento, fecha_ingreso, estado) VALUES (?, ?, ?, ?, ?)',
-            [ayudaId, numero_lote.trim(), fecha_vencimiento || null, fecha_ingreso || new Date().toISOString().split('T')[0], 'DISPONIBLE']
+            'INSERT INTO ayuda_lotes (id_ayuda, numero_lote, cantidad_inicial, cantidad_disponible, fecha_vencimiento, fecha_ingreso, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [ayudaId, numero_lote.trim(), cantidad_ingreso, cantidad_ingreso, fecha_vencimiento || null, fecha_ingreso || new Date().toISOString().split('T')[0], 'DISPONIBLE']
         );
         const lote_id = loteInsert.insertId;
 
-        // 2. Registrar el Ingreso (si tienes tabla ingresos_ayuda)
         try {
             await connection.query(
-                'INSERT INTO ingresos_ayuda (lote_id, usuario_id, observaciones) VALUES (?, ?, ?)',
-                [lote_id, usuario_id, observaciones || null]
+                'INSERT INTO ingresos_ayuda (id_lote, cantidad, id_usuario_registra, observaciones) VALUES (?, ?, ?, ?)',
+                [lote_id, cantidad_ingreso, usuario_id, observaciones || null]
             );
         } catch (e) {
             // Si no existe la tabla, continuar
