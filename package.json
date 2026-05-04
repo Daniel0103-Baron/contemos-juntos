@@ -1,0 +1,14 @@
+{
+  "name": "contemos-juntos",
+  "version": "1.0.0",
+  "description": "Sistema de Control y Trazabilidad de Ayudas Humanitarias",
+  "main": "backend/server.js",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
