@@ -170,3 +170,8 @@ a:hover {
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
+
+/* Spinner animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
