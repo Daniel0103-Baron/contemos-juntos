@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.*
+migrate_to_aiven.js
+seed_db.js
+db_update.js
+schema_check.js
+describe_schema.js
+schema_output.txt
+testdb.js
+check-database.js
+*.log
